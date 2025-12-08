@@ -54,6 +54,10 @@ import { ShapeCache } from "@excalidraw/element";
 
 import { updateBindings } from "@excalidraw/element";
 
+import { ROUNDNESS, sceneCoordsToViewportCoords } from "@excalidraw/common";
+
+import { bumpVersion, mutateElement } from "@excalidraw/element";
+
 import type {
   ConvertibleGenericTypes,
   ConvertibleLinearTypes,
@@ -71,12 +75,6 @@ import type {
 
 import type { Scene } from "@excalidraw/element";
 
-import {
-  bumpVersion,
-  mutateElement,
-  ROUNDNESS,
-  sceneCoordsToViewportCoords,
-} from "..";
 import { trackEvent } from "../analytics";
 import { atom } from "../editor-jotai";
 

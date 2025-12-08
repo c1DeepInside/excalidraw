@@ -1,11 +1,28 @@
 {
-  "name": "@excalidraw/excalidraw",
+  "name": "@blocksandarrows/excalidraw",
   "version": "0.18.0",
   "type": "module",
   "types": "./dist/types/excalidraw/index.d.ts",
   "main": "./dist/prod/index.js",
   "module": "./dist/prod/index.js",
+  "typesVersions": {
+    "*": {
+      "types/element/types": ["./dist/types/element/src/types.d.ts"],
+      "types/types": ["./dist/types/excalidraw/types.d.ts"],
+      "types/data/transform": ["./dist/types/excalidraw/data/transform.d.ts"],
+      "*": ["./dist/types/excalidraw/*"]
+    }
+  },
   "exports": {
+    "./types/element/types": {
+      "types": "./dist/types/element/src/types.d.ts"
+    },
+    "./types/types": {
+      "types": "./dist/types/excalidraw/types.d.ts"
+    },
+    "./types/data/transform": {
+      "types": "./dist/types/excalidraw/data/transform.d.ts"
+    },
     "./common/*": {
       "types": "./dist/types/common/src/*.d.ts"
     },
@@ -21,14 +38,9 @@
     "./*": {
       "types": "./dist/types/excalidraw/*.d.ts"
     },
-    "./index.css": {
-      "development": "./dist/dev/index.css",
-      "production": "./dist/prod/index.css"
-    },
+    "./index.css": "./dist/prod/index.css",
     ".": {
       "types": "./dist/types/excalidraw/index.d.ts",
-      "development": "./dist/dev/index.js",
-      "production": "./dist/prod/index.js",
       "default": "./dist/prod/index.js"
     }
   },
@@ -79,10 +91,10 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "6.0.2",
-    "@excalidraw/common": "0.18.0",
-    "@excalidraw/element": "0.18.0",
+    "@excalidraw/common": "file:../common",
+    "@excalidraw/element": "file:../element",
     "@excalidraw/laser-pointer": "1.3.1",
-    "@excalidraw/math": "0.18.0",
+    "@excalidraw/math": "file:../math",
     "@excalidraw/mermaid-to-excalidraw": "1.1.3",
     "@excalidraw/random-username": "1.1.0",
     "@radix-ui/react-popover": "1.1.6",

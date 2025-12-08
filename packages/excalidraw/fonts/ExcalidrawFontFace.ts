@@ -8,11 +8,9 @@ export class ExcalidrawFontFace {
   public readonly urls: URL[] | DataURL[];
   public readonly fontFace: FontFace;
 
-  private static readonly ASSETS_FALLBACK_URL = `https://esm.sh/${
-    import.meta.env.PKG_NAME
-      ? `${import.meta.env.PKG_NAME}@${import.meta.env.PKG_VERSION}` // is provided during package build
-      : "@excalidraw/excalidraw" // fallback to the latest package version (i.e. for app)
-  }/dist/prod/`;
+  // Use local fonts path instead of CDN for forked Excalidraw
+  // Fallback will be resolved relative to current origin in createUrls
+  private static readonly ASSETS_FALLBACK_URL = "/fonts/";
 
   constructor(family: string, uri: string, descriptors?: FontFaceDescriptors) {
     this.urls = ExcalidrawFontFace.createUrls(uri);
@@ -147,24 +145,40 @@ export class ExcalidrawFontFace {
     }
 
     // absolute assets paths, which are found in tests and excalidraw-app build, won't work with base url, so we are stripping initial slash away
-    const assetUrl: string = uri.replace(/^\/+/, "");
+    let assetUrl: string = uri.replace(/^\/+/, "");
     const urls: URL[] = [];
 
     if (typeof window.EXCALIDRAW_ASSET_PATH === "string") {
       const normalizedBaseUrl = this.normalizeBaseUrl(
         window.EXCALIDRAW_ASSET_PATH,
       );
+      // Remove "fonts/" prefix only if EXCALIDRAW_ASSET_PATH already includes "fonts/"
+      let finalAssetUrl = assetUrl;
+      if (normalizedBaseUrl.includes("/fonts/") && assetUrl.startsWith("fonts/")) {
+        finalAssetUrl = assetUrl.replace(/^fonts\//, "");
+      }
 
-      urls.push(new URL(assetUrl, normalizedBaseUrl));
+      urls.push(new URL(finalAssetUrl, normalizedBaseUrl));
     } else if (Array.isArray(window.EXCALIDRAW_ASSET_PATH)) {
       window.EXCALIDRAW_ASSET_PATH.forEach((path) => {
         const normalizedBaseUrl = this.normalizeBaseUrl(path);
-        urls.push(new URL(assetUrl, normalizedBaseUrl));
+        let finalAssetUrl = assetUrl;
+        if (normalizedBaseUrl.includes("/fonts/") && assetUrl.startsWith("fonts/")) {
+          finalAssetUrl = assetUrl.replace(/^fonts\//, "");
+        }
+        urls.push(new URL(finalAssetUrl, normalizedBaseUrl));
       });
     }
 
-    // fallback url for bundled fonts
-    urls.push(new URL(assetUrl, ExcalidrawFontFace.ASSETS_FALLBACK_URL));
+    // fallback url for bundled fonts - use local fonts path
+    const fallbackBaseUrl = ExcalidrawFontFace.normalizeBaseUrl(
+      ExcalidrawFontFace.ASSETS_FALLBACK_URL,
+    );
+    // Fallback always uses /fonts/, so remove fonts/ prefix if present
+    const fallbackAssetUrl = assetUrl.startsWith("fonts/")
+      ? assetUrl.replace(/^fonts\//, "")
+      : assetUrl;
+    urls.push(new URL(fallbackAssetUrl, fallbackBaseUrl));
 
     return urls;
   }

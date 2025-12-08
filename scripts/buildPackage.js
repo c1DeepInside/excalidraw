@@ -16,7 +16,7 @@ const ENV_VARS = {
   },
 };
 
-// excludes all external dependencies and bundles only the source code
+// Bundle everything into one package (no external @excalidraw/* deps)
 const getConfig = (outdir) => ({
   outdir,
   bundle: true,
@@ -29,8 +29,11 @@ const getConfig = (outdir) => ({
   chunkNames: "[dir]/[name]-[hash]",
   alias: {
     "@excalidraw/utils": path.resolve(__dirname, "../packages/utils/src"),
+    "@excalidraw/common": path.resolve(__dirname, "../packages/common/src"),
+    "@excalidraw/element": path.resolve(__dirname, "../packages/element/src"),
+    "@excalidraw/math": path.resolve(__dirname, "../packages/math/src"),
   },
-  external: ["@excalidraw/common", "@excalidraw/element", "@excalidraw/math"],
+  // No external @excalidraw packages - bundle everything
   loader: {
     ".woff2": "file",
   },
